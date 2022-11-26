@@ -9,7 +9,7 @@ In the second hands-on exercise, I learned how to plot functional choropleth map
 
 ## Getting Started
 
-The code chunk below installs and loads **sf**, **tmap** and **tidyverse** package into R environment.
+The code chunk below installs and loads **sf**, **tmap** and **tidyverse** packages into R environment.
 
 ```{r}
 pacman::p_load(sf,tmap, tidyverse)
