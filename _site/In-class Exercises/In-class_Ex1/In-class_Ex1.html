@@ -153,6 +153,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../Hands-on Exercises/Hands-on_Ex1-2/Hands-on_Ex1-2.html">
  <span class="dropdown-text">Hands-on Exercise 1-2</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on Exercises/Hands-on_Ex2/Hands-on_Ex2.html">
+ <span class="dropdown-text">Hands-on Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -195,7 +199,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#overview" id="toc-overview" class="nav-link active" data-scroll-target="#overview">Overview</a></li>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting started</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started">Getting Started</a></li>
   <li><a href="#getting-the-data-into-r" id="toc-getting-the-data-into-r" class="nav-link" data-scroll-target="#getting-the-data-into-r">Getting the Data into R</a>
   <ul class="collapse">
   <li><a href="#import-shapefile" id="toc-import-shapefile" class="nav-link" data-scroll-target="#import-shapefile">Import shapefile</a></li>
@@ -209,7 +213,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#creating-rook-contiguity-based-neighbors" id="toc-creating-rook-contiguity-based-neighbors" class="nav-link" data-scroll-target="#creating-rook-contiguity-based-neighbors">Creating ROOK contiguity based neighbors</a></li>
   <li><a href="#visualizing-contiguity-weights" id="toc-visualizing-contiguity-weights" class="nav-link" data-scroll-target="#visualizing-contiguity-weights">Visualizing contiguity weights</a></li>
   </ul></li>
-  <li><a href="#computing-distance-based-neighbors" id="toc-computing-distance-based-neighbors" class="nav-link" data-scroll-target="#computing-distance-based-neighbors">Computing distance based neighbors</a>
+  <li><a href="#computing-distance-based-neighbors" id="toc-computing-distance-based-neighbors" class="nav-link" data-scroll-target="#computing-distance-based-neighbors">Computing Distance based Neighbors</a>
   <ul class="collapse">
   <li><a href="#determine-cut-off-distance" id="toc-determine-cut-off-distance" class="nav-link" data-scroll-target="#determine-cut-off-distance">Determine cut-off distance</a></li>
   <li><a href="#computing-fixed-distance-weight-matrix" id="toc-computing-fixed-distance-weight-matrix" class="nav-link" data-scroll-target="#computing-fixed-distance-weight-matrix">Computing fixed distance weight matrix</a></li>
@@ -259,8 +263,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul>
 </section>
 <section id="getting-started" class="level2">
-<h2 class="anchored" data-anchor-id="getting-started">Getting started</h2>
-<p>The code chunk below to ensure <strong>sf</strong>, <strong>tmap</strong>, <strong>tidyverse and spdep</strong> packages re installed in my R environment.</p>
+<h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
+<p>The code chunk below to ensure <strong>sf</strong>, <strong>tmap</strong>, <strong>tidyverse and spdep</strong> packages are installed in my R environment.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, tmap, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -569,7 +573,7 @@ Link number distribution:
 </section>
 </section>
 <section id="computing-distance-based-neighbors" class="level2">
-<h2 class="anchored" data-anchor-id="computing-distance-based-neighbors">Computing distance based neighbors</h2>
+<h2 class="anchored" data-anchor-id="computing-distance-based-neighbors">Computing Distance based Neighbors</h2>
 <p>Here we learn how to derive distance-based weight matrices using <em>dnearneigh()</em> of <strong>spdep</strong> package.</p>
 <section id="determine-cut-off-distance" class="level3">
 <h3 class="anchored" data-anchor-id="determine-cut-off-distance">Determine cut-off distance</h3>
@@ -1256,7 +1260,7 @@ Non-symmetric neighbours list</code></pre>
 <section id="row-standardized-weights-matrix" class="level3">
 <h3 class="anchored" data-anchor-id="row-standardized-weights-matrix">Row-standardized weights matrix</h3>
 <p>We assign weights to each neighboring polygon to drive their values.</p>
-<p>We will assign equal weight (style=“W”) for simplicity sake but there is a drawback, the polygons along the edges of the study area will base their lagged values on fewer polygons hence may over or under-estimate the true nature of spatial autocorrelation in the data. The more robust options is to use style=“B".</p>
+<p>We will assign equal weight (style=“W”) for simplicity sake but there is a drawback, the polygons along the edges of the study area will base their lagged values on fewer polygons hence may over or under-estimate the true nature of spatial autocorrelation in the data. The more robust options is to use style=“B”.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>rswm_q <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(wm_q, <span class="at">style=</span><span class="st">"W"</span>, <span class="at">zero.policy =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>rswm_q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>

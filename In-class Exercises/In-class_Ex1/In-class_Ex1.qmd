@@ -15,9 +15,9 @@ In this hands-on exercise, I learned how to calculate spatial weights using R. T
 
 -   **spdep** package - compute spatial weights and calculate spatially lagged variables
 
-## Getting started
+## Getting Started
 
-The code chunk below to ensure **sf**, **tmap**, **tidyverse and spdep** packages re installed in my R environment.
+The code chunk below to ensure **sf**, **tmap**, **tidyverse and spdep** packages are installed in my R environment.
 
 ```{r}
 pacman::p_load(sf, spdep, tmap, tidyverse)
@@ -165,7 +165,7 @@ plot(hunan$geometry, border="lightgrey")
 plot(wm_r, coords, pch = 19, cex = 0.6, add = TRUE, col = "red", main="Rook Contiguity")
 ```
 
-## Computing distance based neighbors
+## Computing Distance based Neighbors
 
 Here we learn how to derive distance-based weight matrices using *dnearneigh()* of **spdep** package.
 
@@ -261,7 +261,7 @@ plot(hunan$geometry, border="lightgrey")
 plot(knn6, coords, pch = 19, cex = 0.6, add = TRUE, col = "red")
 ```
 
-## Using Inversed Distance Weighted (IDW) Method 
+## Using Inversed Distance Weighted (IDW) Method
 
 First, we will compute the distances between areas using \*nbdists() of **spdep**.
 
@@ -275,7 +275,7 @@ ids
 
 We assign weights to each neighboring polygon to drive their values.
 
-We will assign equal weight (style="W") for simplicity sake but there is a drawback, the polygons along the edges of the study area will base their lagged values on fewer polygons hence may over or under-estimate the true nature of spatial autocorrelation in the data. The more robust options is to use style="B\".
+We will assign equal weight (style="W") for simplicity sake but there is a drawback, the polygons along the edges of the study area will base their lagged values on fewer polygons hence may over or under-estimate the true nature of spatial autocorrelation in the data. The more robust options is to use style="B".
 
 ```{r}
 rswm_q <- nb2listw(wm_q, style="W", zero.policy = TRUE)
