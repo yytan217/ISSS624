@@ -1,0 +1,166 @@
+---
+title: "In-class_Ex2"
+editor: visual
+---
+
+## Overview
+
+In this in-class exercise we look at how to handle the large volume of data for Take-home Exercise 1 and the data wrangling.
+
+## Getting Started
+
+We start with ensuring we have all the required R packages installed and loaded.
+
+Most of the R packages we used in previous exercises but we need to also include funModeling, which we will need for rapid EDA.
+
+```{r}
+pacman::p_load(sf, spdep, tmap, tidyverse, funModeling)
+```
+
+## Importing Geospatial Data
+
+### Importing water point geospatial data
+
+First, we will import the water point geospatial data (i.e., geo_export) downloaded from WPdx.
+
+```{r}
+#| eval: false
+wp <- st_read(dsn = "geodata", 
+              layer = "geo_export",
+              crs = 4326) %>%
+  filter(clean_coun == "Nigeria") 
+```
+
+Next, we save the extracted sf data table into an output file in rds data format and save in the Geodata file.
+
+```{r}
+#| eval: false
+write_rds(wp,"geodata/wp_nga.rds")
+```
+
+### Importing Nigeria LGA boundary data
+
+```{r}
+#| eval: false
+nga <- st_read(dsn = "geodata",
+               layer = "geoBoundaries-NGA-ADM2",
+               crs = 4326)
+```
+
+## Data Wrangling
+
+We see many NA in the *status_cle* field, below code chunk is used to recode all *NA* status into *Unknown*.
+
+```{r}
+#| eval: false
+wp_nga <- read_rds("geodata/wp_nga.rds") %>%
+  mutate(status_cle = replace_na(status_cle, "Unknown"))
+```
+
+Using *freq()* of funModeling package to display the distribution of *status_cle* field.
+
+```{r}
+#| eval: false
+freq(data=wp_nga,
+     input = 'status_cle')
+```
+
+## Extracting Water Point Data
+
+### Extracting functional water point
+
+If we look at the first EDA results, we know that there are a few that falls under the 'functional' category.
+
+```{r}
+#| eval: false
+wpt_functional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Functional", 
+             "Functional but not in use",
+             "Functional but needs repair"))
+```
+
+Again we do a quick EDA to only look at the functional water points. Same results as above but only showing the functional ones.
+
+```{r}
+#| eval: false
+freq(data=wpt_functional,
+     input = 'status_cle')
+```
+
+### Extracting non-functional water point
+
+```{r}
+#| eval: false
+wpt_nonfunctional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Non-Functional", 
+             "Non-Functional due to dry season",
+             "Abandoned/Decommissioned",
+             "Abandoned",
+             "Non functional due to dry season"))
+```
+
+```{r}
+#| eval: false
+freq(data=wpt_nonfunctional,
+     input = 'status_cle')
+```
+
+### Extracting water with unknown status
+
+We may consider merging this with non functional for Take-home Exercise 1.
+
+```{r}
+#| eval: false
+wpt_unknown <- wp_nga %>%
+  filter(status_cle %in%
+           c("Unknown"))
+```
+
+Looking at the data, the results is the same as the first EDA, there are 10656 water point with unknown status.
+
+## Performing Point-in-Polygon Count
+
+```{r}
+#| eval: false
+nga_wp <- nga %>% 
+  mutate(`total wpt` = lengths(
+    st_intersects(nga, wp_nga))) %>%
+  mutate(`wpt functional` = lengths(
+    st_intersects(nga, wpt_functional))) %>%
+  mutate(`wpt non-functional` = lengths(
+    st_intersects(nga, wpt_nonfunctional))) %>%
+  mutate(`wpt unknown` = lengths(
+    st_intersects(nga, wpt_unknown)))
+```
+
+## Saving the Analytical Data Table
+
+```{r}
+#| eval: false
+nga_wp <- nga_wp %>%
+  mutate(pct_functional = `wpt functional`/`total wpt`) %>%
+  mutate(`pct_non-functional` = `wpt non-functional`/`total wpt`)
+```
+
+Saving the sf data table with analysis into rds format.
+
+```{r}
+#| eval: false
+write_rds(nga_wp, "geodata/nga_wp.rds")
+```
+
+## Visualizing the spatial distribution of water points
+
+```{r}
+#| fig-width: 14 
+#| fig-height: 12
+nga_wp <- read_rds("geodata/nga_wp.rds") 
+total <- qtm(nga_wp, "total wpt") 
+wp_functional <- qtm(nga_wp, "wpt functional") 
+wp_nonfunctional <- qtm(nga_wp, "wpt non-functional") 
+unknown <- qtm(nga_wp, "wpt unknown")
+
+tmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp=1, ncol=2)
+```
