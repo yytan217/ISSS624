@@ -376,6 +376,8 @@ tm_shape(nga_wp.localMI) +
 #### Mapping both local Moran's I values and p-values
 
 ```{r}
+#| fig-width: 14 
+#| fig-height: 12
 localMI.map <- tm_shape(nga_wp.localMI) +
   tm_fill(col = "Ii", 
           style = "pretty", 
@@ -439,6 +441,8 @@ nga_wp.gi <- cbind(nga_wp, as.matrix(gi.fixed)) %>%
 #### Mapping Gi values with fixed distance weights
 
 ```{r}
+#| fig-width: 14 
+#| fig-height: 12
 wpt_nonfunctional1 <- qtm(nga_wp, "wpt non-functional")
 
 Gimap <-tm_shape(nga_wp.gi) +
