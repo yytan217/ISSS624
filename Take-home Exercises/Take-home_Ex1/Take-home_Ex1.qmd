@@ -1,0 +1,452 @@
+---
+title: "Take-home Exercise 1:Geospatial Analytics for Social Good "
+author: Yi Ying TAN
+execute: 
+  warning: false
+  message: false
+editor: visual
+---
+
+## Overview
+
+In this take-home exercise, we will apply appropriate global and local measure of spatial association techniques we have learned so far to reveal the spatial patterns of non-functional water points in Nigeria.
+
+## The Data
+
+2 data sources are used in this study:
+
+1.  Water point geospatial data - obtained from [WPDx Global Data Repositories](https://www.waterpointdata.org/access-data/) - The repository is a cloud based data library that stores the water point related data from rural areas at the water point or small water scheme level collected by the WPDx project.
+2.  Nigeria LGA boundary data - Nigeria Level-2 Administrative Boundary (also known as Local Government Area) polygon features GIS data downloaded from [geoBoundaries](https://www.geoboundaries.org/) website.
+
+## Getting Started
+
+We start by ensuring we have all the required R packages installed and loaded. The few key packages used and their purposes as follows:
+
+-   **sf** - import geospatial data
+
+-   **tidyverse** - perform data science task such as importing (using **readr**), manipulating (using **tidyr**) and transforming data (using **dplyr**).
+
+-   **spdep**
+
+    -   compute Global Spatial Autocorrelation (GSA) statistics
+
+        -   plot Moran scatter plot
+
+        -   compute and plot spatial correlogram
+
+    -   compute Local Indicator of Spatial Association (LISA) statistics for detecting clusters and outliers
+
+    -   compute Getis-Ord's Gi-statistics for detecting hot spot or/and cold spot area
+
+-   **tmap** - visualize the analysis output
+
+-   **funModeling** - for quick Exploratory Data Analysis.
+
+```{r}
+pacman::p_load(sf, spdep, tmap, tidyverse, funModeling)
+```
+
+## Importing Geospatial Data
+
+### Importing water point geospatial data
+
+```{r}
+#| eval: false
+wp <- st_read(dsn = "geodata", 
+              layer = "geo_export",
+              crs = 4326) %>%
+  filter(clean_coun == "Nigeria") 
+```
+
+Next, we save the extracted sf data table into an output file in rds data format and save in the Geodata file.
+
+```{r}
+#| eval: false
+write_rds(wp,"geodata/wp_nga.rds")
+```
+
+### Importing Nigeria LGA boundary data
+
+```{r}
+#| eval: false
+nga <- st_read(dsn = "geodata",
+               layer = "geoBoundaries-NGA-ADM2",
+               crs = 4326)
+```
+
+## Data Wrangling
+
+We see many NA in the *status_cle* field, below code chunk is used to recode all *NA* status into *Unknown*.
+
+```{r}
+#| eval: false
+wp_nga <- read_rds("geodata/wp_nga.rds") %>%
+  mutate(status_cle = replace_na(status_cle, "Unknown"))
+```
+
+Using *freq()* of funModeling package to display the distribution of *status_cle* field.
+
+```{r}
+#| eval: false
+freq(data=wp_nga,
+     input = 'status_cle')
+```
+
+## Extracting Water Point Data
+
+### Extracting functional water point
+
+If we look at the first EDA results, we know that there are a few that falls under the 'functional' category.
+
+```{r}
+#| eval: false
+wpt_functional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Functional", 
+             "Functional but not in use",
+             "Functional but needs repair"))
+```
+
+Again we do a quick EDA to only look at the functional water points. Same results as above but only showing the functional ones.
+
+```{r}
+#| eval: false
+freq(data=wpt_functional,
+     input = 'status_cle')
+```
+
+### Extracting non-functional water point
+
+```{r}
+#| eval: false
+wpt_nonfunctional <- wp_nga %>%
+  filter(status_cle %in%
+           c("Non-Functional", 
+             "Non-Functional due to dry season",
+             "Abandoned/Decommissioned",
+             "Abandoned",
+             "Non functional due to dry season"))
+```
+
+```{r}
+#| eval: false
+freq(data=wpt_nonfunctional,
+     input = 'status_cle')
+```
+
+### Extracting water with unknown status
+
+```{r}
+#| eval: false
+wpt_unknown <- wp_nga %>%
+  filter(status_cle %in%
+           c("Unknown"))
+```
+
+Looking at the data, the results is the same as the first EDA, there are 10656 water point with unknown status.
+
+### Performing Point-in-Polygon Count
+
+```{r}
+#| eval: false
+nga_wp <- nga %>% 
+  mutate(`total wpt` = lengths(
+    st_intersects(nga, wp_nga))) %>%
+  mutate(`wpt functional` = lengths(
+    st_intersects(nga, wpt_functional))) %>%
+  mutate(`wpt non-functional` = lengths(
+    st_intersects(nga, wpt_nonfunctional))) %>%
+  mutate(`wpt unknown` = lengths(
+    st_intersects(nga, wpt_unknown)))
+```
+
+### Saving the Analytical Data Table
+
+```{r}
+#| eval: false
+nga_wp <- nga_wp %>%
+  mutate(pct_functional = `wpt functional`/`total wpt`) %>%
+  mutate(`pct_non-functional` = `wpt non-functional`/`total wpt`)
+```
+
+Saving the sf data table with analysis into rds format.
+
+```{r}
+#| eval: false
+write_rds(nga_wp, "geodata/nga_wp.rds")
+```
+
+### Visualizing the spatial distribution of water points
+
+```{r}
+#| fig-width: 14 
+#| fig-height: 12
+nga_wp <- read_rds("geodata/nga_wp.rds") 
+total <- qtm(nga_wp, "total wpt") 
+wp_functional <- qtm(nga_wp, "wpt functional") 
+wp_nonfunctional <- qtm(nga_wp, "wpt non-functional") 
+unknown <- qtm(nga_wp, "wpt unknown")
+
+tmap_arrange(total, wp_functional, wp_nonfunctional, unknown, asp=1, ncol=2)
+```
+
+## Projection Transformation
+
+We are transforming the original data from geographic coordinate system to projected coordinate system . This is because geographic coordinate system is not appropriate if the analysis need to use distance or/and area measurement.
+
+```{r}
+nga_wp26391 <- st_transform(nga_wp,26391)
+```
+
+To check the CSR again by using below code chunk.
+
+```{r}
+st_crs(nga_wp26391)
+```
+
+## Computing distance based neighbors
+
+If we look at the earlier graph plot of the spatial distribution of water points using the combined data frame we can see that there is a large variation in polygon size (some large and some very small), hence we will use fixed distance method to ensure a consistent scale of analysis.
+
+### Determine the cut-off distance
+
+To calculate the upper limit for distance band we need the region points coordinates.
+
+We start with getting longitude values, we map st_centroid() over the geometry column of us.bound and access the longitude value through double bracket notation \[\[\]\] and 1. For latitude we will replace the same but with \[\[2\]\].
+
+```{r}
+longitude <- map_dbl(nga_wp$geometry, ~st_centroid(.x)[[1]])
+```
+
+```{r}
+latitude <- map_dbl(nga_wp$geometry, ~st_centroid(.x)[[2]])
+```
+
+We use *cbind()* to put longitude and latitude into the same object.
+
+```{r}
+coords <- cbind(longitude, latitude)
+```
+
+Examining the first few observations to see if things look correct:
+
+```{r}
+head(coords)
+```
+
+```{r}
+k1 <- knn2nb(knearneigh(coords))
+k1dists <- unlist(nbdists(k1, coords, longlat = TRUE))
+summary(k1dists)
+```
+
+The summary shows that the largest first nearest neighbor distance is 71.66 km, so using this as the upper threshold gives certainty that all units will have at least one neighbor.
+
+### Computing fixed distance weight matrix
+
+```{r}
+wm_d72 <- dnearneigh(coords, 0, 72, longlat = TRUE)
+wm_d72
+```
+
+### Plotting fixed distance weight matrix
+
+```{r}
+plot(nga_wp$geometry, border="lightgrey")
+plot(wm_d72, coords, add=TRUE)
+plot(k1, coords, add=TRUE, col="red", length=0.08)
+```
+
+## Global Spatial Autocorrelation
+
+### Row standardized weight matrix
+
+Next, we need to assign weights to each neighboring polygon.
+
+```{r}
+rswm_d72 <- nb2listw(wm_d72, 
+                   style="W", 
+                   zero.policy = TRUE)
+rswm_d72
+```
+
+### Global Spatial Autocorrelation: Moran's I
+
+Below code chunk performs Moran's I statistical testing.
+
+```{r}
+moran.test(nga_wp$`wpt non-functional`, 
+           listw=rswm_d72, 
+           zero.policy = TRUE, 
+           na.action=na.omit)
+```
+
+#### Computing Monte Carlo Moran's I
+
+This code chunk performs permutation test for Moran's I statistics. A total of 1000 simulation will be performed.
+
+```{r}
+set.seed(1234)
+bperm= moran.mc(nga_wp$`wpt non-functional`, 
+                listw=rswm_d72, 
+                nsim=999, 
+                zero.policy = TRUE, 
+                na.action=na.omit)
+bperm
+```
+
+#### Visualizing Monte Carlo Moran's I
+
+We are plotting the distribution of the statistical values as a histogram to examine the test statistics in greater detail.
+
+```{r}
+mean(bperm$res[1:999])
+```
+
+```{r}
+var(bperm$res[1:999])
+```
+
+```{r}
+summary(bperm$res[1:999])
+```
+
+```{r}
+hist(bperm$res, 
+     freq=TRUE, 
+     breaks=20, 
+     xlab="Simulated Moran's I")
+abline(v=0, 
+       col="red") 
+```
+
+## Cluster and Outlier Analysis
+
+Local Indicators of Spatial Association (LISA) are statistics that evaluate the existence of clusters in the spatial arrangement of a given variable. We will learn how to apply LISA to detect cluster and outlier in Hunan's 2012 GDPPC.
+
+### **Computing local Moran's I**
+
+```{r}
+fips <- order(nga_wp$shapeName)
+localMI <- localmoran(nga_wp$`wpt non-functional`, rswm_d72)
+head(localMI)
+```
+
+The meaning of respective columns in the results:
+
+-   Ii: the local Moran's I statistics
+
+-   E.Ii: the expectation of local Moran statistic under the randomisation hypothesis
+
+-   Var.Ii: the variance of local Moran statistic under the randomisation hypothesis
+
+-   Z.Ii: the standard deviation of local Moran statistic
+
+-   Pr(): the p-value of local Moran statistic
+
+#### Mapping the local Moran's I
+
+```{r}
+nga_wp.localMI <- cbind(nga_wp,localMI) %>%
+  rename(Pr.Ii = Pr.z....E.Ii..)
+```
+
+#### Mapping local Moran's I values
+
+```{r}
+tm_shape(nga_wp.localMI) +
+  tm_fill(col = "Ii", 
+          style = "pretty",
+          palette = "RdBu",
+          title = "local moran statistics") +
+  tm_borders(alpha = 0.5)
+```
+
+#### Mapping local Moran's I p-values
+
+```{r}
+tm_shape(nga_wp.localMI) +
+  tm_fill(col = "Pr.Ii", 
+          breaks=c(-Inf, 0.001, 0.01, 0.05, 0.1, Inf),
+          palette="-Blues", 
+          title = "local Moran's I p-values") +
+  tm_borders(alpha = 0.5)
+```
+
+#### Mapping both local Moran's I values and p-values
+
+```{r}
+localMI.map <- tm_shape(nga_wp.localMI) +
+  tm_fill(col = "Ii", 
+          style = "pretty", 
+          title = "local moran statistics") +
+  tm_borders(alpha = 0.5)
+
+pvalue.map <- tm_shape(nga_wp.localMI) +
+  tm_fill(col = "Pr.Ii", 
+          breaks=c(-Inf, 0.001, 0.01, 0.05, 0.1, Inf),
+          palette="-Blues", 
+          title = "local Moran's I p-values") +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(localMI.map, pvalue.map, asp=1, ncol=2)
+```
+
+## **Hot Spot and Cold Spot Area Analysis**
+
+Localised spatial statistics can be used to detect hot spot and cold spot areas. 'Hot spot' generally means a region or value that is higher relative to its surrounding.
+
+### **Getis and Ord's G-statistics**
+
+This statistics look at neighbors within a defined proximity to identify high or low values cluster spatially. 3 steps for this analysis.
+
+1.  Derive spatial weight matrix
+
+2.  Compute Gi statistics
+
+3.  Mapping Gi statistics
+
+Given we calculated the fixed distance weight matrix earlier,
+
+```{r}
+wm72_lw <- nb2listw(wm_d72, style = 'B')
+summary(wm72_lw)
+```
+
+### Computing Gi statistics
+
+#### Gi statistics using fixed distance
+
+```{r}
+fips <- order(nga_wp$shapeName)
+gi.fixed <- localG(nga_wp$`wpt non-functional`, wm72_lw)
+gi.fixed
+```
+
+The Gi statistics is represented as a Z-score, the greater values represent a greater intensity of clustering and the direction (positive/negative) indicates high or low clusters.
+
+Next, we will join the Gi values to the hunan sf data frame by using the code chunk below that performs 3 tasks:
+
+-   Convert the output vector (i.e., *gi.fixed*) into r matrix object by using *as.matrix()*
+
+-   Use *cbind()* to join hunan data frame and *gi.fixed* matrix to produce a new spatial polygon data framescalled *hunan.gi*. The field name of the gi values is renamed to *gstat_fixed*.
+
+```{r}
+nga_wp.gi <- cbind(nga_wp, as.matrix(gi.fixed)) %>%
+  rename(gstat_fixed = as.matrix.gi.fixed.)
+```
+
+#### Mapping Gi values with fixed distance weights
+
+```{r}
+wpt_nonfunctional1 <- qtm(nga_wp, "wpt non-functional")
+
+Gimap <-tm_shape(nga_wp.gi) +
+  tm_fill(col = "gstat_fixed", 
+          style = "pretty",
+          palette="-RdBu",
+          title = "local Gi") +
+  tm_borders(alpha = 0.5)
+
+tmap_arrange(wpt_nonfunctional1, Gimap, asp=1, ncol=2)
+```

@@ -1,5 +1,5 @@
 ---
-title: "In-class_Ex1"
+title: "In-class Exercise 1: Spatial Weights and Applications"
 editor: visual
 ---
 
