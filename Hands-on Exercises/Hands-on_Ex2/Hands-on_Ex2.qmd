@@ -35,7 +35,15 @@ We are applying appropriate spatial statistical methods to find out if developme
 
 ### Setting the tools
 
-The code chunk below to ensure **sf**, **tmap**, **tidyverse and spdep** packages are installed in my R environment.
+We start by ensuring we have all the required R packages installed and loaded. The few key packages used and their purposes as follows:
+
+-   **sf** - import geospatial data
+
+-   **tidyverse** - perform data science task such as importing (using **readr**), manipulating (using **tidyr**) and transforming data (using **dplyr**).
+
+-   **spdep**
+
+    -   compute Global Spatial Autocorrelation (GSA) statistics
 
 ```{r}
 pacman::p_load(sf, spdep, tmap, tidyverse)

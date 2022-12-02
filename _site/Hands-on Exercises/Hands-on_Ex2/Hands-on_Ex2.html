@@ -157,6 +157,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../Hands-on Exercises/Hands-on_Ex2/Hands-on_Ex2.html">
  <span class="dropdown-text">Hands-on Exercise 2</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on Exercises/Hands-on_Ex3/Hands-on_Ex3.html">
+ <span class="dropdown-text">Hands-on Exercise 3</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -302,7 +306,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </section>
 <section id="setting-the-tools" class="level3">
 <h3 class="anchored" data-anchor-id="setting-the-tools">Setting the tools</h3>
-<p>The code chunk below to ensure <strong>sf</strong>, <strong>tmap</strong>, <strong>tidyverse and spdep</strong> packages are installed in my R environment.</p>
+<p>We start by ensuring we have all the required R packages installed and loaded. The few key packages used and their purposes as follows:</p>
+<ul>
+<li><p><strong>sf</strong> - import geospatial data</p></li>
+<li><p><strong>tidyverse</strong> - perform data science task such as importing (using <strong>readr</strong>), manipulating (using <strong>tidyr</strong>) and transforming data (using <strong>dplyr</strong>).</p></li>
+<li><p><strong>spdep</strong></p>
+<ul>
+<li>compute Global Spatial Autocorrelation (GSA) statistics</li>
+</ul></li>
+</ul>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>pacman<span class="sc">::</span><span class="fu">p_load</span>(sf, spdep, tmap, tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
