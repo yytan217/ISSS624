@@ -1,5 +1,5 @@
 ---
-title: "Take-home Exercise 1:Geospatial Analytics for Social Good "
+title: "Take-home Exercise 1: Geospatial Analytics for Social Good "
 author: Yi Ying TAN
 execute: 
   warning: false
@@ -134,7 +134,7 @@ freq(data=wpt_nonfunctional,
      input = 'status_cle')
 ```
 
-### Extracting water with unknown status
+### Extracting water point with unknown status
 
 ```{r}
 #| eval: false

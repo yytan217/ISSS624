@@ -1,0 +1,313 @@
+---
+title: "Take-home Exercise 2: Regionalisation of Multivariate Water Point Attributes with Non-spatially Constrained and Spatially Constrained Clustering Methods"
+author: Yi Ying TAN
+execute: 
+  warning: false
+  message: false
+editor: visual
+---
+
+## Overview
+
+## Getting Started
+
+### The Data
+
+We will continue our work from Take-home Exercise 1 and will be using the same data sources :
+
+1.  Water point geospatial data - obtained from [WPDx Global Data Repositories](https://www.waterpointdata.org/access-data/) - The repository is a cloud based data library that stores the water point related data from rural areas at the water point or small water scheme level collected by the WPDx project.
+2.  Nigeria LGA boundary data - Nigeria Level-2 Administrative Boundary (also known as Local Government Area) polygon features GIS data downloaded from [geoBoundaries](https://www.geoboundaries.org/) website.
+
+### Setting the tools
+
+We start by ensuring we have all the required R packages installed and loaded. The few key packages used and their purposes as follows:
+
+-   **sf, rgdal** and **spdep** - spatial data handling
+
+-   **tidyverse**, especially **readr**, **ggplot2** and **dplyr** - attribute data handling
+
+-   **tmap** - choropleth mapping
+
+-   **coorplot**, **ggpubr**, and **heatmaply** - multivariate data visualization and analysis
+
+-   **cluster** and **ClustGeo** - cluster analysis
+
+-   **funModeling** - for quick Exploratory Data Analysis.
+
+The code chunk below installs and loads these R packages.
+
+```{r}
+pacman::p_load(rgdal, spdep, tmap, sf, funModeling,
+               ggpubr, cluster, factoextra, NbClust,
+               heatmaply, corrplot, psych, tidyverse, ClustGeo)
+```
+
+## Data Preparation
+
+### Importing water point geospatial data
+
+```{r}
+#| eval: false
+wp <- st_read(dsn = "geodata", 
+              layer = "geo_export",
+              crs = 4326) %>%
+  filter(clean_coun == "Nigeria") 
+```
+
+Next, we save the extracted sf data table into an output file in rds data format and save in the Geodata file.
+
+```{r}
+#| eval: false
+write_rds(wp,"geodata/wp_nga.rds")
+```
+
+### Importing Nigeria LGA boundary data
+
+```{r}
+#| eval: false
+nga <- st_read(dsn = "geodata",
+               layer = "geoBoundaries-NGA-ADM2",
+               crs = 4326)
+```
+
+### Data Wrangling
+
+We see many NA in the *status_cle* field, below code chunk is used to recode all *NA* status into *Unknown*.
+
+```{r}
+#| eval: false
+wp_nga <- read_rds("geodata/wp_nga.rds") %>%
+  rename ("Country" = "clean_coun",
+          "clean_adm2" = "clean_adm2",
+          "lat" = "lat_deg",
+          "long" = "lon_deg") %>%
+  mutate(status_cle = replace_na(status_cle, "Unknown"))
+
+wp_nga_sf <- st_as_sf(wp_nga, coords = c("long", "lat"),  crs = 4326)
+```
+
+### Projection Transformation
+
+Next, we transform the coordinates from 4326 to 26391 projection using *st_transform()* function.
+
+```{r}
+#| eval: false
+wp_nga_sf <- st_transform(wp_nga_sf, crs = 26391)
+nga <- nga %>%
+  st_transform(crs = 26391)
+
+st_crs (nga)
+st_crs (wp_nga_sf)
+```
+
+### Visualizing water point distribution 
+
+We can use the simple function *freq()* of funModeling package to display the distribution of *status_cle* field.
+
+```{r}
+#| eval: false
+freq(data=wp_nga_sf,
+     input = 'status_cle')
+```
+
+### Extracting Water Point Data
+
+#### Extracting functional water point
+
+If we look at the first EDA results, we know that there are a few that falls under the 'functional' category.
+
+```{r}
+#| eval: false
+wpt_functional <- wp_nga_sf %>%
+  filter(status_cle %in%
+           c("Functional", 
+             "Functional but not in use",
+             "Functional but needs repair"))
+```
+
+```{r}
+#| eval: false
+freq(data=wpt_functional,
+     input = 'status_cle')
+```
+
+#### Extracting non-functional water point
+
+```{r}
+#| eval: false
+wpt_nonfunctional <- wp_nga_sf %>%
+  filter(status_cle %in%
+           c("Non-Functional", 
+             "Non-Functional due to dry season",
+             "Abandoned/Decommissioned",
+             "Abandoned",
+             "Non functional due to dry season"))
+```
+
+```{r}
+#| eval: false
+freq(data=wpt_nonfunctional,
+     input = 'status_cle')
+```
+
+#### Extracting water point with unknown status
+
+```{r}
+#| eval: false
+wpt_unknown <- wp_nga_sf %>%
+  filter(status_cle %in%
+           c("Unknown"))
+```
+
+Looking at the data, the results is the same as the first EDA, there are 10656 water point with unknown status.
+
+#### Extracting water point using the main technology
+
+```{r}
+#| eval: false
+wpt_handpump <- wp_nga_sf %>%
+  filter(X_water_tec %in%
+           c("Hand Pump"))
+```
+
+#### Extracting the usage capacity of water points
+
+```{r}
+#| eval: false
+wpt_lowuse <- wp_nga_sf %>%
+  filter(usage_cap < 1000)
+```
+
+```{r}
+#| eval: false
+wpt_highuse <- wp_nga_sf %>%
+  filter(usage_cap >= 1000)
+```
+
+#### Extracting rural water points
+
+```{r}
+#| eval: false
+wpt_rural <- wp_nga_sf %>%
+  filter(is_urban %in%
+           c("False"))
+```
+
+### Performing Point-in-Polygon Count
+
+```{r}
+#| eval: false
+nga_wp <- nga %>% 
+  mutate(`total wpt` = lengths(
+    st_intersects(nga, wp_nga_sf))) %>%
+  mutate(`wpt functional` = lengths(
+    st_intersects(nga, wpt_functional))) %>%
+  mutate(`wpt non-functional` = lengths(
+    st_intersects(nga, wpt_nonfunctional))) %>%
+  mutate(`wpt unknown` = lengths(
+    st_intersects(nga, wpt_unknown))) %>%
+  mutate(`wpt hand pump` = lengths(
+    st_intersects(nga, wpt_handpump))) %>%
+  mutate(`wpt high usage` = lengths(
+    st_intersects(nga, wpt_highuse))) %>%
+  mutate(`wpt low usage` = lengths(
+    st_intersects(nga, wpt_lowuse))) %>% 
+  mutate(`wpt rural` = lengths(
+    st_intersects(nga, wpt_rural)))  
+```
+
+### Saving the Analytical Data Table
+
+```{r}
+#| eval: false
+nga_wp <- nga_wp %>%
+  mutate(`pct_functional` = `wpt functional`/`total wpt`) %>%
+  mutate(`pct_non_functional` = `wpt non-functional`/`total wpt`) %>%
+  mutate(`pct_handpump` = `wpt hand pump`/`total wpt`) %>%
+  mutate(`pct_highusage` = `wpt high usage`/`total wpt`) %>%
+  mutate(`pct_lowusage` = `wpt low usage`/`total wpt`) %>%
+  mutate(`pct_rural` = `wpt rural`/`total wpt`)
+```
+
+Saving the sf data table with analysis into rds format.
+
+```{r}
+#| eval: false
+write_rds(nga_wp, "geodata/nga_wp.rds")
+```
+
+```{r}
+#| eval: false
+nga_wp <- read_rds("geodata/nga_wp.rds") %>%
+  mutate(pct_functional = replace_na(pct_functional, 0)) %>%
+  mutate(pct_non_functional = replace_na(pct_non_functional, 0)) %>%
+  mutate(pct_handpump = replace_na(pct_handpump, 0)) %>%
+  mutate(pct_highusage = replace_na(pct_highusage, 0)) %>%
+  mutate(pct_lowusage = replace_na(pct_lowusage, 0)) %>% 
+  mutate(pct_rural = replace_na(pct_rural, 0)) 
+```
+
+## Exploratory Data Analysis
+
+### EDA using statistical graphs
+
+We will use histogram to look at the overall distribution of the data values.
+
+```{r}
+#| eval: false
+functional <- ggplot(data=nga_wp, 
+             aes(x= `wpt functional`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="orange")
+
+nonfunctional <- ggplot(data=nga_wp, 
+             aes(x= `wpt non-functional`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="orange")
+
+handpump <- ggplot(data=nga_wp, 
+             aes(x= `wpt hand pump`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="orange")
+
+highuse <- ggplot(data=nga_wp, 
+             aes(x= `wpt high usage`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="orange")
+
+lowuse <- ggplot(data=nga_wp, 
+             aes(x= `wpt low usage`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="orange")
+
+rural <- ggplot(data=nga_wp, 
+             aes(x= `wpt rural`)) +
+  geom_histogram(bins=20, 
+                 color="black", 
+                 fill="orange")
+```
+
+```{r}
+#| eval: false
+ggarrange(functional, nonfunctional, handpump, highuse, lowuse, rural, 
+          ncol = 3, 
+          nrow = 2)
+```
+
+## Correlation Analysis
+
+```{r}
+#| eval: false
+cluster_vars.cor = cor(nga_wp[,15:20])
+corrplot.mixed(cluster_vars.cor,
+         lower = "ellipse", 
+               upper = "number",
+               tl.pos = "lt",
+               diag = "l",
+               tl.col = "black")
+```

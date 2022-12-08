@@ -8,7 +8,7 @@
 
 <meta name="author" content="Yi Ying TAN">
 
-<title>ISSS624 - Take-home Exercise 1:Geospatial Analytics for Social Good</title>
+<title>ISSS624 - Take-home Exercise 1: Geospatial Analytics for Social Good</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -162,6 +162,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../Hands-on Exercises/Hands-on_Ex3/Hands-on_Ex3.html">
  <span class="dropdown-text">Hands-on Exercise 3</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../Hands-on Exercises/Hands-on_Ex4/Hands-on_Ex4.html">
+ <span class="dropdown-text">Hands-on Exercise 4</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -188,7 +192,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../Take-home Exercises/Take-home_Ex1/Take-home_Ex1.html">
  <span class="dropdown-text">Take-home Exercise 1</span></a>
   </li>  
-        <li class="dropdown-header">Take-home Exercise 2</li>
+        <li>
+    <a class="dropdown-item" href="../../Take-home Exercises/Take-home_Ex2/Take-home_Ex2.html">
+ <span class="dropdown-text">Take-home Exercise 2</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -227,7 +234,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul class="collapse">
   <li><a href="#extracting-functional-water-point" id="toc-extracting-functional-water-point" class="nav-link" data-scroll-target="#extracting-functional-water-point">Extracting functional water point</a></li>
   <li><a href="#extracting-non-functional-water-point" id="toc-extracting-non-functional-water-point" class="nav-link" data-scroll-target="#extracting-non-functional-water-point">Extracting non-functional water point</a></li>
-  <li><a href="#extracting-water-with-unknown-status" id="toc-extracting-water-with-unknown-status" class="nav-link" data-scroll-target="#extracting-water-with-unknown-status">Extracting water with unknown status</a></li>
+  <li><a href="#extracting-water-point-with-unknown-status" id="toc-extracting-water-point-with-unknown-status" class="nav-link" data-scroll-target="#extracting-water-point-with-unknown-status">Extracting water point with unknown status</a></li>
   <li><a href="#performing-point-in-polygon-count" id="toc-performing-point-in-polygon-count" class="nav-link" data-scroll-target="#performing-point-in-polygon-count">Performing Point-in-Polygon Count</a></li>
   <li><a href="#saving-the-analytical-data-table" id="toc-saving-the-analytical-data-table" class="nav-link" data-scroll-target="#saving-the-analytical-data-table">Saving the Analytical Data Table</a></li>
   <li><a href="#visualizing-the-spatial-distribution-of-water-points" id="toc-visualizing-the-spatial-distribution-of-water-points" class="nav-link" data-scroll-target="#visualizing-the-spatial-distribution-of-water-points">Visualizing the spatial distribution of water points</a></li>
@@ -261,7 +268,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Take-home Exercise 1:Geospatial Analytics for Social Good</h1>
+<h1 class="title">Take-home Exercise 1: Geospatial Analytics for Social Good</h1>
 </div>
 
 
@@ -387,8 +394,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">input =</span> <span class="st">'status_cle'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="extracting-water-with-unknown-status" class="level3">
-<h3 class="anchored" data-anchor-id="extracting-water-with-unknown-status">Extracting water with unknown status</h3>
+<section id="extracting-water-point-with-unknown-status" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-water-point-with-unknown-status">Extracting water point with unknown status</h3>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>wpt_unknown <span class="ot">&lt;-</span> wp_nga <span class="sc">%&gt;%</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(status_cle <span class="sc">%in%</span></span>
