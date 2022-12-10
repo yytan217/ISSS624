@@ -183,6 +183,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../../Hands-on Exercises/Hands-on_Ex3/Hands-on_Ex3.html">
  <span class="dropdown-text">In-class Exercise 3</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../../In-class Exercises/In-class_Ex4/In-class_Ex4.html">
+ <span class="dropdown-text">In-class Exercise 4</span></a>
+  </li>  
     </ul>
   </li>
   <li class="nav-item dropdown ">
@@ -243,6 +247,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#eda-using-statistical-graphs" id="toc-eda-using-statistical-graphs" class="nav-link" data-scroll-target="#eda-using-statistical-graphs">EDA using statistical graphs</a></li>
   </ul></li>
   <li><a href="#correlation-analysis" id="toc-correlation-analysis" class="nav-link" data-scroll-target="#correlation-analysis">Correlation Analysis</a></li>
+  <li><a href="#hierarchy-cluster-analysis" id="toc-hierarchy-cluster-analysis" class="nav-link" data-scroll-target="#hierarchy-cluster-analysis">Hierarchy Cluster Analysis</a>
+  <ul class="collapse">
+  <li><a href="#extracting-clustering-variables" id="toc-extracting-clustering-variables" class="nav-link" data-scroll-target="#extracting-clustering-variables">Extracting clustering variables</a></li>
+  <li><a href="#computing-proximity-matrix" id="toc-computing-proximity-matrix" class="nav-link" data-scroll-target="#computing-proximity-matrix">Computing proximity matrix</a></li>
+  <li><a href="#computing-hierarchical-clustering" id="toc-computing-hierarchical-clustering" class="nav-link" data-scroll-target="#computing-hierarchical-clustering">Computing hierarchical clustering</a></li>
+  <li><a href="#selecting-the-optimal-clustering-algorithm" id="toc-selecting-the-optimal-clustering-algorithm" class="nav-link" data-scroll-target="#selecting-the-optimal-clustering-algorithm">Selecting the optimal clustering algorithm</a></li>
+  <li><a href="#determining-optimal-clusters" id="toc-determining-optimal-clusters" class="nav-link" data-scroll-target="#determining-optimal-clusters">Determining optimal clusters</a></li>
+  <li><a href="#interpreting-the-dendrograms" id="toc-interpreting-the-dendrograms" class="nav-link" data-scroll-target="#interpreting-the-dendrograms">Interpreting the dendrograms</a></li>
+  <li><a href="#visually-driven-hierarchical-clustering-analysis" id="toc-visually-driven-hierarchical-clustering-analysis" class="nav-link" data-scroll-target="#visually-driven-hierarchical-clustering-analysis">Visually-driven hierarchical clustering analysis</a></li>
+  <li><a href="#mapping-the-clusters-found" id="toc-mapping-the-clusters-found" class="nav-link" data-scroll-target="#mapping-the-clusters-found">Mapping the clusters found</a></li>
+  </ul></li>
+  <li><a href="#spatially-constrained-clustering---skater" id="toc-spatially-constrained-clustering---skater" class="nav-link" data-scroll-target="#spatially-constrained-clustering---skater">Spatially Constrained Clustering - SKATER</a>
+  <ul class="collapse">
+  <li><a href="#converting-into-spatial-polygon-data-frame" id="toc-converting-into-spatial-polygon-data-frame" class="nav-link" data-scroll-target="#converting-into-spatial-polygon-data-frame">Converting into spatial polygon data frame</a></li>
+  <li><a href="#computing-neighbor-list" id="toc-computing-neighbor-list" class="nav-link" data-scroll-target="#computing-neighbor-list">Computing neighbor list</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -488,58 +508,254 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">wpt functional</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"orange"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"green"</span>)</span>
 <span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>nonfunctional <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
 <span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">wpt non-functional</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
 <span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"orange"</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"green"</span>)</span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>handpump <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
 <span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">wpt hand pump</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
 <span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"orange"</span>)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"green"</span>)</span>
 <span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>highuse <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
 <span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">wpt high usage</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
 <span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"orange"</span>)</span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"green"</span>)</span>
 <span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>lowuse <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
 <span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">wpt low usage</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
 <span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"orange"</span>)</span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"green"</span>)</span>
 <span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>rural <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data=</span>nga_wp, </span>
 <span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x=</span> <span class="st">`</span><span class="at">wpt rural</span><span class="st">`</span>)) <span class="sc">+</span></span>
 <span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">bins=</span><span class="dv">20</span>, </span>
 <span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a>                 <span class="at">color=</span><span class="st">"black"</span>, </span>
-<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"orange"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>                 <span class="at">fill=</span><span class="st">"green"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(functional, nonfunctional, handpump, highuse, lowuse, rural, </span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">ncol =</span> <span class="dv">3</span>, </span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">nrow =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<p>We see that the value range for the variables are quite similar, as such we do not need to standardize the input variables.</p>
 </section>
 </section>
 <section id="correlation-analysis" class="level2">
 <h2 class="anchored" data-anchor-id="correlation-analysis">Correlation Analysis</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>cluster_vars.cor <span class="ot">=</span> <span class="fu">cor</span>(nga_wp[,<span class="dv">15</span><span class="sc">:</span><span class="dv">20</span>])</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot.mixed</span>(cluster_vars.cor,</span>
-<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>         <span class="at">lower =</span> <span class="st">"ellipse"</span>, </span>
-<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">upper =</span> <span class="st">"number"</span>,</span>
-<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">tl.pos =</span> <span class="st">"lt"</span>,</span>
-<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">diag =</span> <span class="st">"l"</span>,</span>
-<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">tl.col =</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>cluster_vars <span class="ot">&lt;-</span> nga_wp <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_set_geometry</span>(<span class="cn">NULL</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>cluster_vars.cor <span class="ot">=</span> <span class="fu">cor</span>(cluster_vars[,<span class="dv">14</span><span class="sc">:</span><span class="dv">19</span>])</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">corrplot.mixed</span>(cluster_vars.cor,</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">lower =</span> <span class="st">"ellipse"</span>, </span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>               <span class="at">upper =</span> <span class="st">"number"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">tl.pos =</span> <span class="st">"lt"</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>               <span class="at">diag =</span> <span class="st">"l"</span>,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>               <span class="at">tl.col =</span> <span class="st">"black"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The correlation plot shows that pct_highusage and pct_lowusage are highly correlated (understandably given these 2 variables should add up to be 1), we will remove one of them and only use pct_highusage in the cluster analysis.</p>
+</section>
+<section id="hierarchy-cluster-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="hierarchy-cluster-analysis">Hierarchy Cluster Analysis</h2>
+<section id="extracting-clustering-variables" class="level3">
+<h3 class="anchored" data-anchor-id="extracting-clustering-variables">Extracting clustering variables</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>cluster_vars <span class="ot">&lt;-</span> nga_wp <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">st_set_geometry</span>(<span class="cn">NULL</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">"shapeName"</span>, <span class="st">"pct_functional"</span>, <span class="st">"pct_non_functional"</span>, <span class="st">"pct_handpump"</span>, <span class="st">"pct_highusage"</span>, <span class="st">"pct_rural"</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cluster_vars,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Notice we have not included pct_lowusage because it is highly correlated with pct_highusage.</p>
+<p>Next, we will change the row numbers to township name by using code chunk below.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(cluster_vars) <span class="ot">&lt;-</span> <span class="fu">make.names</span>(cluster_vars<span class="sc">$</span><span class="st">"shapeName"</span>, <span class="at">unique =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(cluster_vars,<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We can see that the row numbers are now replaced by unique township names.</p>
+<p>Now, we will delete the shapeName field.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>nga_wp_cv <span class="ot">&lt;-</span> <span class="fu">select</span>(cluster_vars,<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(nga_wp_cv, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="computing-proximity-matrix" class="level3">
+<h3 class="anchored" data-anchor-id="computing-proximity-matrix">Computing proximity matrix</h3>
+<p>We will compute the proximity matrix by using <em>dist()</em> of R. <em>dist()</em> supports 6 distance proximity calculations: <strong>euclidean</strong> (default)<strong>, maximum, manhattan, canberra, binary</strong> and <strong>minkowski</strong>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>proxmat <span class="ot">&lt;-</span> <span class="fu">dist</span>(nga_wp_cv, <span class="at">method =</span> <span class="st">'euclidean'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will inspect the content of proxmat using this code chunk.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>proxmat</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="computing-hierarchical-clustering" class="level3">
+<h3 class="anchored" data-anchor-id="computing-hierarchical-clustering">Computing hierarchical clustering</h3>
+<p>The code chunk below performs hierarchical cluster analysis using ward.D method. The hierarchical clustering output is stored in an object of class <strong>hclust</strong> which describes the tree produced by the clustering process.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>hclust_ward <span class="ot">&lt;-</span> <span class="fu">hclust</span>(proxmat, <span class="at">method =</span> <span class="st">'ward.D'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Now, we can plot the tree.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hclust_ward, <span class="at">cex =</span> <span class="fl">0.3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="selecting-the-optimal-clustering-algorithm" class="level3">
+<h3 class="anchored" data-anchor-id="selecting-the-optimal-clustering-algorithm">Selecting the optimal clustering algorithm</h3>
+<p>The identification of stronger clustering structures is one of the challenges we face when performing hierarchical clustering. We can solve this using <em>agnes()</em> function of <strong>cluster</strong> package, which will compute the agglomerative coefficients of all hierarchical clustering algorithms. (Values closer to 1 suggest strong clustering structure)</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">"average"</span>, <span class="st">"single"</span>, <span class="st">"complete"</span>, <span class="st">"ward"</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(m) <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">"average"</span>, <span class="st">"single"</span>, <span class="st">"complete"</span>, <span class="st">"ward"</span>)</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>ac <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">agnes</span>(nga_wp_cv, <span class="at">method =</span> x)<span class="sc">$</span>ac</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">map_dbl</span>(m, ac)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We see from the results that Ward’s method will provide the strongest clustering structure, hence we will be using Ward for the subsequent analysis in this exercise.</p>
+</section>
+<section id="determining-optimal-clusters" class="level3">
+<h3 class="anchored" data-anchor-id="determining-optimal-clusters">Determining optimal clusters</h3>
+<p>There are 3 commonly used methods to determine the optimal clusters:</p>
+<ul>
+<li><p>Elbow Method</p></li>
+<li><p>Average Silhouette Method</p></li>
+<li><p>Gap Statistic Method</p></li>
+</ul>
+<section id="gap-statistic-method" class="level4">
+<h4 class="anchored" data-anchor-id="gap-statistic-method">Gap Statistic Method</h4>
+<p>The gap statistics compares the total within intra-cluster variation for different values of k with their expected values under null reference distribution of the data. The estimate of the optimal clusters will be the value that maximize the gap statistic (i.e., that yields the largest gap statistic). This means that the clustering structure is far away from the random uniform distribution of points.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12345</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>gap_stat <span class="ot">&lt;-</span> <span class="fu">clusGap</span>(nga_wp_cv, </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                    <span class="at">FUN =</span> hcut, </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">nstart =</span> <span class="dv">25</span>, </span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">K.max =</span> <span class="dv">10</span>, </span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">B =</span> <span class="dv">50</span>)</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the result</span></span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(gap_stat, <span class="at">method =</span> <span class="st">"firstmax"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we can visualize the results.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fviz_gap_stat</span>(gap_stat)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If we look at the gap statistic graph, the recommended number of cluster to retain is <strong>9</strong>.</p>
+</section>
+</section>
+<section id="interpreting-the-dendrograms" class="level3">
+<h3 class="anchored" data-anchor-id="interpreting-the-dendrograms">Interpreting the dendrograms</h3>
+<p>In the dendrogram above, each leaf corresponds to one observation. As we move up the tree, observations that are similar to each other are combined into branches, which are themselves fused at a higher height.</p>
+<p>The height of the fusion, provided on the vertical axis, indicates the similarity (or dissimilarity) between two observations. The higher the height of the fusion, the less similar the observations are.</p>
+<p>We can draw the dendrogram with a border around the selected clusters.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(hclust_ward, <span class="at">cex =</span> <span class="fl">0.3</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rect.hclust</span>(hclust_ward, </span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>            <span class="at">k =</span> <span class="dv">9</span>, </span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>            <span class="at">border =</span> <span class="dv">2</span><span class="sc">:</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="visually-driven-hierarchical-clustering-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="visually-driven-hierarchical-clustering-analysis">Visually-driven hierarchical clustering analysis</h3>
+<p>In this section we will build both highly interactive and static cluster heatmaps using <strong>heatmaply</strong>.</p>
+<section id="transforming-the-data-frame-into-matrix" class="level4">
+<h4 class="anchored" data-anchor-id="transforming-the-data-frame-into-matrix">Transforming the data frame into matrix</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>nga_wp_cv_mat <span class="ot">&lt;-</span> <span class="fu">data.matrix</span>(nga_wp_cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="plotting-interactive-cluster-heatmap" class="level4">
+<h4 class="anchored" data-anchor-id="plotting-interactive-cluster-heatmap">Plotting interactive cluster heatmap</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmaply</span>(<span class="fu">normalize</span>(nga_wp_cv_mat),</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>          <span class="at">Colv=</span><span class="cn">NA</span>,</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>          <span class="at">dist_method =</span> <span class="st">"euclidean"</span>,</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>          <span class="at">hclust_method =</span> <span class="st">"ward.D"</span>,</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>          <span class="at">seriate =</span> <span class="st">"OLO"</span>,</span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>          <span class="at">colors =</span> Greens,</span>
+<span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>          <span class="at">k_row =</span> <span class="dv">6</span>,</span>
+<span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">margins =</span> <span class="fu">c</span>(<span class="cn">NA</span>,<span class="dv">200</span>,<span class="dv">60</span>,<span class="cn">NA</span>),</span>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>          <span class="at">fontsize_row =</span> <span class="dv">4</span>,</span>
+<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">fontsize_col =</span> <span class="dv">5</span>,</span>
+<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">main=</span><span class="st">"Geographic Segmentation of Nigeria by Water Point indicators"</span>,</span>
+<span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">xlab =</span> <span class="st">"Water Point Indicators"</span>,</span>
+<span id="cb36-13"><a href="#cb36-13" aria-hidden="true" tabindex="-1"></a>          <span class="at">ylab =</span> <span class="st">"Townships of Nigeria"</span></span>
+<span id="cb36-14"><a href="#cb36-14" aria-hidden="true" tabindex="-1"></a>          )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+<section id="mapping-the-clusters-found" class="level3">
+<h3 class="anchored" data-anchor-id="mapping-the-clusters-found">Mapping the clusters found</h3>
+<p>After examining the dendogram above, we decide to retained 9 clusters.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>groups <span class="ot">&lt;-</span> <span class="fu">as.factor</span>(<span class="fu">cutree</span>(hclust_ward, <span class="at">k=</span><span class="dv">9</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>But to visualize the clusters, the 9 groups need to be appended onto <em>nga_wp</em> simple feature object. Below code chunk is used to perform 3 steps:</p>
+<ul>
+<li><p>convert the <em>groups</em> list object to a matrix</p></li>
+<li><p>Use <em>cbind()</em> to append groups matrix onto <em>nga_wp</em></p></li>
+<li><p>rename <em>as.matrix.groups</em> field to <em>CLUSTER</em></p></li>
+</ul>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>nga_wp_cluster <span class="ot">&lt;-</span> <span class="fu">cbind</span>(nga_wp, <span class="fu">as.matrix</span>(groups)) <span class="sc">%&gt;%</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">`</span><span class="at">CLUSTER</span><span class="st">`</span><span class="ot">=</span><span class="st">`</span><span class="at">as.matrix.groups.</span><span class="st">`</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After, we will plot the choropleth map.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">qtm</span>(nga_wp_cluster, <span class="st">"CLUSTER"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We see above that the clusters are fragmented. This is one of the common limitations of non-spatial clustering algo such as hierarchical cluster analysis.</p>
+</section>
+</section>
+<section id="spatially-constrained-clustering---skater" class="level2">
+<h2 class="anchored" data-anchor-id="spatially-constrained-clustering---skater">Spatially Constrained Clustering - SKATER</h2>
+<section id="converting-into-spatial-polygon-data-frame" class="level3">
+<h3 class="anchored" data-anchor-id="converting-into-spatial-polygon-data-frame">Converting into spatial polygon data frame</h3>
+<p>First, we need to convert <em>nga_wp</em> into spatial polygon data frame. This is because SKATER function only support <strong>sp</strong> objects. We will use below code chunk for the conversion.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>nga_wp_sp <span class="ot">&lt;-</span> <span class="fu">as_Spatial</span>(nga_wp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="computing-neighbor-list" class="level3">
+<h3 class="anchored" data-anchor-id="computing-neighbor-list">Computing neighbor list</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>nga_wp.nb <span class="ot">&lt;-</span> <span class="fu">poly2nb</span>(nga_wp_sp)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nga_wp.nb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we will plot the neighbors list using below code chunk.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nga_wp_sp, </span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">border=</span><span class="fu">grey</span>(.<span class="dv">5</span>))</span>
+<span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(nga_wp.nb, </span>
+<span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>     <span class="fu">coordinates</span>(nga_wp_sp), </span>
+<span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col=</span><span class="st">"green"</span>, </span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">add=</span><span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="calculating-edge-costs" class="level4">
+<h4 class="anchored" data-anchor-id="calculating-edge-costs">Calculating edge costs</h4>
+<p>The cost of each edge is the distance between its nodes.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>lcosts <span class="ot">&lt;-</span> <span class="fu">nbcosts</span>(nga_wp.nb, nga_wp_cv)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For each observation, this gives the pairwise dissimilarity between its values on the five variables and the values for the neighbouring observation (from the neighbour list). Basically, this is the notion of a generalised weight for a spatial weights matrix.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>nga_wp.w <span class="ot">&lt;-</span> <span class="fu">nb2listw</span>(nga_wp.nb, </span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>                   lcosts, </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>                   <span class="at">style=</span><span class="st">"B"</span>)</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(nga_wp.w)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 
 
+</section>
+</section>
 </section>
 
 </main> <!-- /main -->

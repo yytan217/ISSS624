@@ -100,7 +100,7 @@ st_crs (nga)
 st_crs (wp_nga_sf)
 ```
 
-### Visualizing water point distribution 
+### Visualizing water point distribution
 
 We can use the simple function *freq()* of funModeling package to display the distribution of *status_cle* field.
 
@@ -259,37 +259,37 @@ functional <- ggplot(data=nga_wp,
              aes(x= `wpt functional`)) +
   geom_histogram(bins=20, 
                  color="black", 
-                 fill="orange")
+                 fill="green")
 
 nonfunctional <- ggplot(data=nga_wp, 
              aes(x= `wpt non-functional`)) +
   geom_histogram(bins=20, 
                  color="black", 
-                 fill="orange")
+                 fill="green")
 
 handpump <- ggplot(data=nga_wp, 
              aes(x= `wpt hand pump`)) +
   geom_histogram(bins=20, 
                  color="black", 
-                 fill="orange")
+                 fill="green")
 
 highuse <- ggplot(data=nga_wp, 
              aes(x= `wpt high usage`)) +
   geom_histogram(bins=20, 
                  color="black", 
-                 fill="orange")
+                 fill="green")
 
 lowuse <- ggplot(data=nga_wp, 
              aes(x= `wpt low usage`)) +
   geom_histogram(bins=20, 
                  color="black", 
-                 fill="orange")
+                 fill="green")
 
 rural <- ggplot(data=nga_wp, 
              aes(x= `wpt rural`)) +
   geom_histogram(bins=20, 
                  color="black", 
-                 fill="orange")
+                 fill="green")
 ```
 
 ```{r}
@@ -299,15 +299,267 @@ ggarrange(functional, nonfunctional, handpump, highuse, lowuse, rural,
           nrow = 2)
 ```
 
+We see that the value range for the variables are quite similar, as such we do not need to standardize the input variables.
+
 ## Correlation Analysis
 
 ```{r}
 #| eval: false
-cluster_vars.cor = cor(nga_wp[,15:20])
+cluster_vars <- nga_wp %>%
+  st_set_geometry(NULL)
+cluster_vars.cor = cor(cluster_vars[,14:19])
 corrplot.mixed(cluster_vars.cor,
          lower = "ellipse", 
                upper = "number",
                tl.pos = "lt",
                diag = "l",
                tl.col = "black")
+```
+
+The correlation plot shows that pct_highusage and pct_lowusage are highly correlated (understandably given these 2 variables should add up to be 1), we will remove one of them and only use pct_highusage in the cluster analysis.
+
+## Hierarchy Cluster Analysis
+
+### Extracting clustering variables
+
+```{r}
+#| eval: false
+cluster_vars <- nga_wp %>%
+  st_set_geometry(NULL) %>%
+  select("shapeName", "pct_functional", "pct_non_functional", "pct_handpump", "pct_highusage", "pct_rural")
+head(cluster_vars,10)
+```
+
+Notice we have not included pct_lowusage because it is highly correlated with pct_highusage.
+
+Next, we will change the row numbers to township name by using code chunk below.
+
+```{r}
+#| eval: false
+row.names(cluster_vars) <- make.names(cluster_vars$"shapeName", unique = TRUE)
+head(cluster_vars,10)
+```
+
+We can see that the row numbers are now replaced by unique township names.
+
+Now, we will delete the shapeName field.
+
+```{r}
+#| eval: false
+nga_wp_cv <- select(cluster_vars,c(2:6))
+head(nga_wp_cv, 10)
+```
+
+### Computing proximity matrix
+
+We will compute the proximity matrix by using *dist()* of R. *dist()* supports 6 distance proximity calculations: **euclidean** (default)**, maximum, manhattan, canberra, binary** and **minkowski**.
+
+```{r}
+#| eval: false
+proxmat <- dist(nga_wp_cv, method = 'euclidean')
+```
+
+We will inspect the content of proxmat using this code chunk.
+
+```{r}
+#| eval: false
+proxmat
+```
+
+### Computing hierarchical clustering
+
+The code chunk below performs hierarchical cluster analysis using ward.D method. The hierarchical clustering output is stored in an object of class **hclust** which describes the tree produced by the clustering process.
+
+```{r}
+#| eval: false
+hclust_ward <- hclust(proxmat, method = 'ward.D')
+```
+
+Now, we can plot the tree.
+
+```{r}
+#| eval: false
+plot(hclust_ward, cex = 0.3)
+```
+
+### Selecting the optimal clustering algorithm
+
+The identification of stronger clustering structures is one of the challenges we face when performing hierarchical clustering. We can solve this using *agnes()* function of **cluster** package, which will compute the agglomerative coefficients of all hierarchical clustering algorithms. (Values closer to 1 suggest strong clustering structure)
+
+```{r}
+#| eval: false
+m <- c( "average", "single", "complete", "ward")
+names(m) <- c( "average", "single", "complete", "ward")
+
+ac <- function(x) {
+  agnes(nga_wp_cv, method = x)$ac
+}
+
+map_dbl(m, ac)
+```
+
+We see from the results that Ward's method will provide the strongest clustering structure, hence we will be using Ward for the subsequent analysis in this exercise.
+
+### Determining optimal clusters
+
+There are 3 commonly used methods to determine the optimal clusters:
+
+-   Elbow Method
+
+-   Average Silhouette Method
+
+-   Gap Statistic Method
+
+#### Gap Statistic Method
+
+The gap statistics compares the total within intra-cluster variation for different values of k with their expected values under null reference distribution of the data. The estimate of the optimal clusters will be the value that maximize the gap statistic (i.e., that yields the largest gap statistic). This means that the clustering structure is far away from the random uniform distribution of points.
+
+```{r}
+#| eval: false
+set.seed(12345)
+gap_stat <- clusGap(nga_wp_cv, 
+                    FUN = hcut, 
+                    nstart = 25, 
+                    K.max = 10, 
+                    B = 50)
+# Print the result
+print(gap_stat, method = "firstmax")
+```
+
+Next, we can visualize the results.
+
+```{r}
+#| eval: false
+fviz_gap_stat(gap_stat)
+```
+
+If we look at the gap statistic graph, the recommended number of cluster to retain is **9**.
+
+### Interpreting the dendrograms
+
+In the dendrogram above, each leaf corresponds to one observation. As we move up the tree, observations that are similar to each other are combined into branches, which are themselves fused at a higher height.
+
+The height of the fusion, provided on the vertical axis, indicates the similarity (or dissimilarity) between two observations. The higher the height of the fusion, the less similar the observations are.
+
+We can draw the dendrogram with a border around the selected clusters.
+
+```{r}
+#| eval: false
+plot(hclust_ward, cex = 0.3)
+rect.hclust(hclust_ward, 
+            k = 9, 
+            border = 2:5)
+```
+
+### Visually-driven hierarchical clustering analysis
+
+In this section we will build both highly interactive and static cluster heatmaps using **heatmaply**.
+
+#### Transforming the data frame into matrix
+
+```{r}
+#| eval: false
+nga_wp_cv_mat <- data.matrix(nga_wp_cv)
+```
+
+#### Plotting interactive cluster heatmap
+
+```{r}
+#| eval: false
+heatmaply(normalize(nga_wp_cv_mat),
+          Colv=NA,
+          dist_method = "euclidean",
+          hclust_method = "ward.D",
+          seriate = "OLO",
+          colors = Greens,
+          k_row = 6,
+          margins = c(NA,200,60,NA),
+          fontsize_row = 4,
+          fontsize_col = 5,
+          main="Geographic Segmentation of Nigeria by Water Point indicators",
+          xlab = "Water Point Indicators",
+          ylab = "Townships of Nigeria"
+          )
+```
+
+### Mapping the clusters found
+
+After examining the dendogram above, we decide to retained 9 clusters.
+
+```{r}
+#| eval: false
+groups <- as.factor(cutree(hclust_ward, k=9))
+```
+
+But to visualize the clusters, the 9 groups need to be appended onto *nga_wp* simple feature object. Below code chunk is used to perform 3 steps:
+
+-   convert the *groups* list object to a matrix
+
+-   Use *cbind()* to append groups matrix onto *nga_wp*
+
+-   rename *as.matrix.groups* field to *CLUSTER*
+
+```{r}
+#| eval: false
+nga_wp_cluster <- cbind(nga_wp, as.matrix(groups)) %>%
+  rename(`CLUSTER`=`as.matrix.groups.`)
+```
+
+After, we will plot the choropleth map.
+
+```{r}
+#| eval: false
+qtm(nga_wp_cluster, "CLUSTER")
+```
+
+We see above that the clusters are fragmented. This is one of the common limitations of non-spatial clustering algo such as hierarchical cluster analysis.
+
+## Spatially Constrained Clustering - SKATER
+
+### Converting into spatial polygon data frame
+
+First, we need to convert *nga_wp* into spatial polygon data frame. This is because SKATER function only support **sp** objects. We will use below code chunk for the conversion.
+
+```{r}
+#| eval: false
+nga_wp_sp <- as_Spatial(nga_wp)
+```
+
+### Computing neighbor list
+
+```{r}
+#| eval: false
+nga_wp.nb <- poly2nb(nga_wp_sp)
+summary(nga_wp.nb)
+```
+
+Next, we will plot the neighbors list using below code chunk.
+
+```{r}
+#| eval: false
+plot(nga_wp_sp, 
+     border=grey(.5))
+plot(nga_wp.nb, 
+     coordinates(nga_wp_sp), 
+     col="green", 
+     add=TRUE)
+```
+
+#### Calculating edge costs
+
+The cost of each edge is the distance between its nodes.
+
+```{r}
+#| eval: false
+lcosts <- nbcosts(nga_wp.nb, nga_wp_cv)
+```
+
+For each observation, this gives the pairwise dissimilarity between its values on the five variables and the values for the neighbouring observation (from the neighbour list). Basically, this is the notion of a generalised weight for a spatial weights matrix.
+
+```{r}
+#| eval: false
+nga_wp.w <- nb2listw(nga_wp.nb, 
+                   lcosts, 
+                   style="B")
+summary(nga_wp.w)
 ```

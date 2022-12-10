@@ -24,7 +24,9 @@ website:
           - text: In-class Exercise 2
             href: In-class Exercises/In-class_Ex2/In-class_Ex2.qmd  
           - text: In-class Exercise 3
-            href: Hands-on Exercises/Hands-on_Ex3/Hands-on_Ex3.qmd              
+            href: Hands-on Exercises/Hands-on_Ex3/Hands-on_Ex3.qmd  
+          - text: In-class Exercise 4
+            href: In-class Exercises/In-class_Ex4/In-class_Ex4.qmd                          
       - text: Take-home Exercises
         menu:
           - text: Take-home Exercise 1
