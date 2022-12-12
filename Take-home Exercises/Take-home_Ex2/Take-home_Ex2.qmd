@@ -112,7 +112,7 @@ freq(data=wp_nga_sf,
      input = 'status_cle')
 ```
 
-![](images/paste-C3E0F123.png)
+![](images/paste-571A65D4.png)
 
 ### Extracting Water Point Data
 
@@ -135,7 +135,7 @@ freq(data=wpt_functional,
      input = 'status_cle')
 ```
 
-![](images/paste-6C8490B9.png)
+![](images/paste-20F9D3E9.png)
 
 #### Extracting non-functional water point
 
@@ -156,7 +156,7 @@ freq(data=wpt_nonfunctional,
      input = 'status_cle')
 ```
 
-![](images/paste-0CB12AF5.png)
+![](images/paste-8F514D32.png)
 
 #### Extracting water point with unknown status
 
@@ -375,7 +375,7 @@ hclust_ward <- hclust(proxmat, method = 'ward.D')
 Now, we can plot the tree.
 
 ```{r}
-plot(hclust_ward, cex = 0.3)
+plot(hclust_ward, cex = 0.08)
 ```
 
 ### Selecting the optimal clustering algorithm
