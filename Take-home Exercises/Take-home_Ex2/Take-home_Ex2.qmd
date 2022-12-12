@@ -112,6 +112,8 @@ freq(data=wp_nga_sf,
      input = 'status_cle')
 ```
 
+![](images/paste-C3E0F123.png)
+
 ### Extracting Water Point Data
 
 #### Extracting functional water point
@@ -133,6 +135,8 @@ freq(data=wpt_functional,
      input = 'status_cle')
 ```
 
+![](images/paste-6C8490B9.png)
+
 #### Extracting non-functional water point
 
 ```{r}
@@ -151,6 +155,8 @@ wpt_nonfunctional <- wp_nga_sf %>%
 freq(data=wpt_nonfunctional,
      input = 'status_cle')
 ```
+
+![](images/paste-0CB12AF5.png)
 
 #### Extracting water point with unknown status
 
@@ -353,9 +359,8 @@ We will compute the proximity matrix by using *dist()* of R. *dist()* supports 6
 proxmat <- dist(nga_wp_cv, method = 'euclidean')
 ```
 
-We will inspect the content of proxmat using this code chunk.
-
 ```{r}
+#| eval: false
 proxmat
 ```
 

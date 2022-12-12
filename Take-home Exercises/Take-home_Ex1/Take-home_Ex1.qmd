@@ -92,6 +92,8 @@ freq(data=wp_nga,
      input = 'status_cle')
 ```
 
+![](images/paste-188A5FDA.png)
+
 ## Extracting Water Point Data
 
 ### Extracting functional water point
@@ -115,6 +117,8 @@ freq(data=wpt_functional,
      input = 'status_cle')
 ```
 
+![](images/paste-FF42B0A2.png)
+
 ### Extracting non-functional water point
 
 ```{r}
@@ -133,6 +137,8 @@ wpt_nonfunctional <- wp_nga %>%
 freq(data=wpt_nonfunctional,
      input = 'status_cle')
 ```
+
+![](images/paste-EF57A525.png)
 
 ### Extracting water point with unknown status
 
